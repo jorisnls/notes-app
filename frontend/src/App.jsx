@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Login from "./pages/Login";
+import Notes from "./pages/Notes";
 
 function App() {
   const [token, setToken] = useState('');
