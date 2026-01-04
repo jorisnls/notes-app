@@ -6,6 +6,7 @@ function Notes({token, onLogout}) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [editingId, setEditingId] = useState(null);
+    const [error, setError] = useState('');
     
     useEffect(() => {
         loadNotes();
@@ -20,12 +21,20 @@ function Notes({token, onLogout}) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
 
+        let data;
         if (editingId) {
-            await api.updateNote(token, editingId, title, content);
+            data = await api.updateNote(token, editingId, title, content);
             setEditingId(null);
         } else {
-            await api.createNote(token, title, content);
+            data = await api.createNote(token, title, content);
+        }
+
+        console.log(data);
+        if (data.error) {
+            setError(data.error);
+            return;
         }
 
         setTitle('');
@@ -37,6 +46,7 @@ function Notes({token, onLogout}) {
         setTitle(note.title);
         setContent(note.content);
         setEditingId(note.id);
+        setError('');
     };
 
     const handleDelete = async (id) => {
@@ -50,6 +60,7 @@ function Notes({token, onLogout}) {
         setTitle('');
         setContent('');
         setEditingId(null);
+        setError('');
     };
     
     return (
@@ -60,6 +71,7 @@ function Notes({token, onLogout}) {
             </div>
 
             <div className="note-form">
+                {error && <div className="error">{error}</div>}
                 <form onSubmit={handleSubmit}>
                     <input
                         type='text'

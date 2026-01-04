@@ -27,6 +27,15 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { title, content } = req.body;
+
+        if (!title || !content) {
+            return res.status(400).json({ error: 'Title and content required' });
+        }
+
+        if (title.length > 100) {
+            return res.status(400).json({ error: 'Title too long (max 100 characters)' });
+        }
+
         const note = await prisma.note.create({
             data: {title, content, userId: req.userId }
         });
